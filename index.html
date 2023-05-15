@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flashcard Generator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Flashcard Generator</h1>
+    <form>
+      <div class="form-group">
+        <label for="question">Question</label>
+        <input type="text" id="question" placeholder="Enter your question">
+      </div>
+      <div class="form-group">
+        <label for="answer">Answer</label>
+        <input type="text" id="answer" placeholder="Enter your answer">
+      </div>
+      <button type="button" id="add-button">Add Card</button>
+    </form>
+    <div id="cards-container"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

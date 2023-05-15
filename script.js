@@ -1,58 +1,82 @@
-// Flashcard data
-let flashcards = [];
+const cardsContainer = document.getElementById('cards-container');
+const addButton = document.getElementById('add-button');
+const questionInput = document.getElementById('question');
+const answerInput = document.getElementById('answer');
 
-// DOM elements
-const flashcardForm = document.getElementById('flashcardForm');
-const questionInput = document.getElementById('questionInput');
-const answerInput = document.getElementById('answerInput');
-const flashcardContainer = document.getElementById('flashcardContainer');
+// Initialize the cards array from localStorage
+let cards = JSON.parse(localStorage.getItem('cards')) || [];
 
-// Event listener for adding a flashcard
-flashcardForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    const question = questionInput.value.trim();
-    const answer = answerInput.value.trim();
-    
-    if (question === '' || answer === '') {
-        alert('Please enter a question and an answer.');
-        return;
-    }
-    
-    const flashcard = {
-        question: question,
-        answer: answer
-    };
-    
-    flashcards.push(flashcard);
-    renderFlashcards();
-    
-    // Reset form inputs
-    questionInput.value = '';
-    answerInput.value = '';
+// Render the existing cards on page load
+renderCards();
+
+// Event listener for the Add Card button
+addButton.addEventListener('click', () => {
+  const question = questionInput.value.trim();
+  const answer = answerInput.value.trim();
+
+  // Validate input
+  if (question === '' || answer === '') {
+    return;
+  }
+
+  // Create a new card object
+  const card = {
+    id: Date.now(),
+    question,
+    answer,
+  };
+
+  // Add the card to the cards array
+  cards.push(card);
+
+  // Clear input fields
+  questionInput.value = '';
+  answerInput.value = '';
+
+  // Save the cards array to localStorage
+  saveCards();
+
+  // Render the updated cards
+  renderCards();
 });
 
-// Function to render flashcards
-function renderFlashcards() {
-    flashcardContainer.innerHTML = '';
-    
-    for (let i = 0; i < flashcards.length; i++) {
-        const flashcard = flashcards[i];
-        
-        const card = document.createElement('div');
-        card.className = 'flashcard';
-        
-        const question = document.createElement('div');
-        question.className = 'question';
-        question.textContent = flashcard.question;
-        
-        const answer = document.createElement('div');
-        answer.className = 'answer';
-        answer.textContent = flashcard.answer;
-        
-        card.appendChild(question);
-        card.appendChild(answer);
-        
-        flashcardContainer.appendChild(card);
-    }
+// Event listener for deleting a card
+cardsContainer.addEventListener('click', (event) => {
+  if (event.target.classList.contains('delete-button')) {
+    const cardId = parseInt(event.target.dataset.id);
+    deleteCard(cardId);
+  }
+});
+
+// Function to render the cards on the page
+function renderCards() {
+  cardsContainer.innerHTML = '';
+
+  if (cards.length === 0) {
+    cardsContainer.innerHTML = '<p>No flashcards available. Add a card above.</p>';
+    return;
+  }
+
+  cards.forEach((card) => {
+    const cardElement = document.createElement('div');
+    cardElement.classList.add('card');
+    cardElement.innerHTML = `
+      <h3>${card.question}</h3>
+      <p>${card.answer}</p>
+      <button class="delete-button" data-id="${card.id}">Delete</button>
+    `;
+    cardsContainer.appendChild(cardElement);
+  });
+}
+
+// Function to save the cards to localStorage
+function saveCards() {
+  localStorage.setItem('cards', JSON.stringify(cards));
+}
+
+// Function to delete a card by its ID
+function deleteCard(cardId) {
+  cards = cards.filter((card) => card.id !== cardId);
+  saveCards();
+  renderCards();
 }
